@@ -1,14 +1,9 @@
 package Steps;
 
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import cucumber.runtime.java.StepDefAnnotation;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.builder.fluent.Configurations;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -107,41 +102,41 @@ public class StepDefinitions {
 
     // Test 2 Code
 
-    private static void goToLoginPage(){
+    private static void goToLoginPage() {
         driver.get(config.getString("login_page.url"));
     }
 
-    private static void enterLoginUsername(String username){
+    private static void enterLoginUsername(String username) {
         standardWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(config.getString("login_page.username"))))
                 .sendKeys(username);
     }
 
-    private static void enterLoginPassword(String password){
+    private static void enterLoginPassword(String password) {
         standardWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(config.getString("login_page.password"))))
                 .sendKeys(password);
     }
 
-    private static void clickLoginButton(){
+    private static void clickLoginButton() {
         standardWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(config.getString("login_page.loginButton"))))
                 .click();
     }
 
-    private static void clickFindTalentButton(){
+    private static void clickFindTalentButton() {
         standardWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(config.getString("login_page.findTalent"))))
                 .click();
     }
 
-    private static void searchFor(String searchCriteria){
+    private static void searchFor(String searchCriteria) {
         WebElement searchBox = standardWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(config.getString("talent_page.searchBox"))));
         searchBox.sendKeys(searchCriteria);
         searchBox.sendKeys(Keys.RETURN);
     }
 
-    private static void confirmResultsContain(String expectedText){
+    private static void confirmResultsContain(String expectedText) {
 //         to wait for search results to finish loading
         try {
             Thread.sleep(1000L);
-        } catch (InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -150,40 +145,53 @@ public class StepDefinitions {
         List<WebElement> resultList = driver.findElements(By.xpath(config.getString("talent_page.result")));
         System.out.println("Length of Results array = " + resultList.size());
 
-        for (WebElement result : resultList){
+        for (WebElement result : resultList) {
             assertTrue(result.findElement(By.xpath(config.getString("talent_page.resultName")))
-                        .getText().toLowerCase().contains(expectedText.toLowerCase())
+                    .getText().toLowerCase().contains(expectedText.toLowerCase())
                     || result.findElement(By.xpath(config.getString("talent_page.resultAddress")))
-                        .getText().toLowerCase().contains(expectedText.toLowerCase()));
+                    .getText().toLowerCase().contains(expectedText.toLowerCase()));
         }
     }
 
-    private static void test1(){
-        config = importProperties();
-        initDriver();
-        goToSignupPage();
-        clickJoinButton();
-        locateSignupFormFields();
-        enterFirstName("Samson");
-        enterLastName("Fung");
-        enterEmail("asdfjaosidfj@abcsd.com");
-        // For some reason abc12345!@# doesn't even work even though it appears to fulfill the password requirements
-        enterPassword("abc12345!@#ABC");
-        clickCheckbox();
-        clickRegisterButton();
-        seeConfirmationPage();
+    @Test
+    private static void test1() {
+        try {
+            config = importProperties();
+            initDriver();
+            goToSignupPage();
+            clickJoinButton();
+            locateSignupFormFields();
+            enterFirstName("Samson");
+            enterLastName("Fung");
+            enterEmail("asdfjaosidfj@abcsd.com");
+            // For some reason abc12345!@# doesn't even work even though it appears to fulfill the password requirements
+            enterPassword("abc12345!@#ABC");
+            clickCheckbox();
+            clickRegisterButton();
+            seeConfirmationPage();
+            closeDriver();
+        } catch (Exception e) {
+            e.printStackTrace();
+            closeDriver();
+        }
     }
 
-    private static void test2(){
-        config = importProperties();
-        initDriver();
-        goToLoginPage();
-        enterLoginUsername("qa+candidatetest@workmarket.com");
-        enterLoginPassword("candidate123");
-        clickLoginButton();
-        clickFindTalentButton();
-        searchFor("test");
-        confirmResultsContain("test");
+    @Test
+    private static void test2() {
+        try {
+            config = importProperties();
+            initDriver();
+            goToLoginPage();
+            enterLoginUsername("qa+candidatetest@workmarket.com");
+            enterLoginPassword("candidate123");
+            clickLoginButton();
+            clickFindTalentButton();
+            searchFor("test");
+            confirmResultsContain("test");
+        } catch (Exception e) {
+            e.printStackTrace();
+            closeDriver();
+        }
     }
 
     public static void main(String... args) {
